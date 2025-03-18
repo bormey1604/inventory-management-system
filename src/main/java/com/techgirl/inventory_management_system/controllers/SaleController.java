@@ -7,6 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
+
 @RestController
 @RequestMapping("api/v1/sales")
 @CrossOrigin("*")
@@ -22,4 +25,17 @@ public class SaleController {
     public ResponseEntity<Sale> createSale(@RequestBody SaleRequestDto requestDto){
         return new ResponseEntity<>(saleService.createSale(requestDto), HttpStatus.OK);
     }
+
+    @GetMapping
+    public ResponseEntity<List<Sale>> getSales(){
+        return new ResponseEntity<>(saleService.getSales(), HttpStatus.OK);
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<Map<String,Object>> getSalesByDate(@RequestParam("date") String date){
+        return new ResponseEntity<>(saleService.getSalesSummaryByDate(date), HttpStatus.OK);
+    }
+
+
+
 }
