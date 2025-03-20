@@ -3,10 +3,12 @@ package com.techgirl.inventory_management_system.controllers;
 
 import com.techgirl.inventory_management_system.dto.ProductDto;
 import com.techgirl.inventory_management_system.services.ProductService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -42,8 +44,14 @@ public class ProductController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<String> updateProduct(@PathVariable String id, @RequestBody ProductDto product) {
-        return ResponseEntity.ok(productService.updateProduct(id,product));
+    public ResponseEntity<Map<String, String>> updateProduct(@PathVariable String id, @RequestBody ProductDto request) {
+        try {
+            String responseMessage = productService.updateProduct(id, request);
+            Map<String, String> response = Map.of("message", responseMessage);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "Product update failed: " + e.getMessage()));
+        }
     }
 
     @DeleteMapping("{id}")
