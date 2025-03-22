@@ -5,7 +5,6 @@ import com.techgirl.inventory_management_system.mapper.Mapper;
 import com.techgirl.inventory_management_system.models.Category;
 import com.techgirl.inventory_management_system.models.Product;
 import com.techgirl.inventory_management_system.models.ProductItem;
-import com.techgirl.inventory_management_system.models.SaleItem;
 import com.techgirl.inventory_management_system.repositories.CategoryRepository;
 import com.techgirl.inventory_management_system.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -61,7 +60,7 @@ public class ProductService {
                 .map(Mapper::fromProduct);
     }
 
-    public String updateProduct(String id, ProductDto productDto) {
+    public ProductDto updateProduct(String id, ProductDto productDto) {
         Optional<Product> existingProductOptional = productRepository.findById(id);
 
         if (existingProductOptional.isPresent()) {
@@ -75,7 +74,6 @@ public class ProductService {
             productRepository.save(existingProduct);
 
             Optional<Category> categoryOptional = categoryRepository.findById(existingProduct.getCategoryId());
-
             if (categoryOptional.isPresent()) {
                 Category category = categoryOptional.get();
 
@@ -87,15 +85,22 @@ public class ProductService {
                     }
                 }
                 categoryRepository.save(category);
-                return "Product and Category updated successfully";
             } else {
-                return "Category not found";
+                 return null;
             }
-
+            return new ProductDto(
+                    existingProduct.getId(),
+                    existingProduct.getName(),
+                    existingProduct.getPrice(),
+                    existingProduct.getDescription(),
+                    existingProduct.getStock(),
+                    existingProduct.getCategoryId()
+            );
         } else {
-            return "Product not found";
+            return null;
         }
     }
+
 
     public String deleteProduct(String id) {
         Optional<Product> existingProductOptional = productRepository.findById(id);

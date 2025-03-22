@@ -44,14 +44,10 @@ public class ProductController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Map<String, String>> updateProduct(@PathVariable String id, @RequestBody ProductDto request) {
-        try {
-            String responseMessage = productService.updateProduct(id, request);
-            Map<String, String> response = Map.of("message", responseMessage);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "Product update failed: " + e.getMessage()));
-        }
+    public ResponseEntity<ProductDto> updateProduct(@PathVariable String id, @RequestBody ProductDto request) {
+
+        return ResponseEntity.ok(productService.updateProduct(id,request));
+
     }
 
     @DeleteMapping("{id}")
