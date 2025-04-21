@@ -2,7 +2,9 @@ spring:
   application.name: inventory-management-system
   data:
     mongodb:
-      uri: mongodb://localhost:27017/inventory_db
+      uri: mongodb://mongo:27017/inventory_db
+#      uri: mongodb://localhost:27017/inventory_db
+
 
 logging:
   level:

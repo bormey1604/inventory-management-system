@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  # Spring Boot application
+  app:
+    image: springboot-app
+    build:
+      context: .
+    container_name: inventory-management-app
+    ports:
+      - "8081:8080"
+    depends_on:
+      - mongo
+    networks:
+      - inventory-network
+
+  # MongoDB service
+  mongo:
+    image: mongo:6.0
+    container_name: inventory-mongo
+    environment:
+      MONGO_INITDB_DATABASE: inventory_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - inventory-network
+
+networks:
+  inventory-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local
