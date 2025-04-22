@@ -7,15 +7,13 @@ pipeline {
     }
 
     environment {
-        // Set any environment variables, if needed
         SPRING_PROFILES_ACTIVE = 'dev'  // Example: You can set the Spring profile here
-
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/bormey1604/inventory-management-system.git'  // URL of your Git repo
+                git branch: 'main', url: 'https://github.com/bormey1604/inventory-management-system.git'  // URL of your Git repo
             }
         }
 
@@ -58,8 +56,11 @@ pipeline {
         stage('Docker Run') {
             steps {
                 script {
+                    // Stop and remove any existing container before running a new one
+                    sh 'docker ps -q -f name=inventory-management-system | xargs -r docker stop | xargs -r docker rm'
+
                     // Run the Docker container from the built image
-                    sh 'docker run -d -p 8080:8080 inventory-management-system:latest'
+                    sh 'docker run -d -p 8080:8080 --name inventory-management-system inventory-management-system:latest'
                 }
             }
         }
@@ -69,6 +70,7 @@ pipeline {
         always {
             // Clean up or perform actions after the build (e.g., sending notifications)
             echo 'Cleaning up after the build'
+            sh 'docker system prune -af'  // Remove unused Docker resources
         }
 
         success {
