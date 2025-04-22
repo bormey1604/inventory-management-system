@@ -1,0 +1,84 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven 3.9.9'  // Name of the Maven installation (set in Global Tool Configuration)
+        jdk 'JDK 21'  // Name of the JDK installation (set in Global Tool Configuration)
+    }
+
+    environment {
+        // Set any environment variables, if needed
+        SPRING_PROFILES_ACTIVE = 'dev'  // Example: You can set the Spring profile here
+
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/bormey1604/inventory-management-system.git'  // URL of your Git repo
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    // Run the Maven build command
+                    sh 'mvn clean install -DskipTests=true'
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                script {
+                    // Run unit tests
+                    sh 'mvn test'
+                }
+            }
+        }
+
+        stage('Package') {
+            steps {
+                script {
+                    // Package the Spring Boot application into a jar/war file
+                    sh 'mvn package -DskipTests=true'
+                }
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                script {
+                    // Build the Docker image for your application
+                    sh 'docker build -t inventory-management-system:latest .'
+                }
+            }
+        }
+
+        stage('Docker Run') {
+            steps {
+                script {
+                    // Run the Docker container from the built image
+                    sh 'docker run -d -p 8080:8080 inventory-management-system:latest'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // Clean up or perform actions after the build (e.g., sending notifications)
+            echo 'Cleaning up after the build'
+        }
+
+        success {
+            // Actions for a successful pipeline run (e.g., notify team)
+            echo 'Build and tests passed successfully!'
+        }
+
+        failure {
+            // Actions for a failed pipeline run (e.g., notify team)
+            echo 'Build failed. Investigate the issues.'
+        }
+    }
+}
