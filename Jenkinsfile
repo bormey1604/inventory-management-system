@@ -70,7 +70,7 @@ pipeline {
         always {
             // Clean up or perform actions after the build (e.g., sending notifications)
             echo 'Cleaning up after the build'
-            sh 'docker system prune -af'  // Remove unused Docker resources
+//             sh 'docker system prune -af'  // Remove unused Docker resources
         }
 
         success {
