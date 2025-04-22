@@ -58,7 +58,7 @@ pipeline {
                     '''
 
                     // Run the Docker container
-                    sh 'docker run -d -p 8080:8080 --name inventory-management-system inventory-management-system:latest'
+                    sh 'docker run -d -p 8090:8090 --name inventory-management-system inventory-management-system:latest'
                 }
             }
         }
