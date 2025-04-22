@@ -36,13 +36,6 @@ pipeline {
             }
         }
 
-        stage('Test Docker') {
-            steps {
-                sh 'docker --version'
-                sh 'docker ps'
-            }
-        }
-
         stage('Docker Build') {
             steps {
                 sh 'docker build -t inventory-management-system:latest .'
