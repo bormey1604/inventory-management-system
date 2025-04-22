@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     tools {
+        dockerTool 'Docker'
         maven 'Maven 3.9.9'  // Name of the Maven installation (set in Global Tool Configuration)
         jdk 'JDK 21'  // Name of the JDK installation (set in Global Tool Configuration)
     }
@@ -43,6 +44,15 @@ pipeline {
                 }
             }
         }
+
+        stages {
+                stage('Test Docker') {
+                    steps {
+                        sh 'docker --version'
+                        sh 'docker ps'
+                    }
+                }
+            }
 
         stage('Docker Build') {
             steps {
