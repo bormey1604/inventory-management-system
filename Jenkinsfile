@@ -45,13 +45,19 @@ pipeline {
         stage('Docker Run') {
             steps {
                 script {
-                    // Stop and remove the old container if it exists
+                    // Stop and remove old container if exists
                     sh '''
                         docker ps -q -f name=inventory-management-system | grep -q . && docker stop inventory-management-system && docker rm inventory-management-system || true
                     '''
 
-                    // Run the Docker container
-                    sh 'docker run -d -p 8090:8090 --name inventory-management-system inventory-management-system:latest'
+                    // Run the container with the versioned image (add image tag here)
+                    sh """
+                        docker run -d -p 8090:8090 \
+                        -e SPRING_PROFILES_ACTIVE=${env.SPRING_PROFILES_ACTIVE} \
+                        -e MONGO_URI=${env.MONGO_URI} \
+                        --name inventory-management-system \
+                        inventory-management-system:latest
+                    """
                 }
             }
         }
