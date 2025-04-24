@@ -3,6 +3,8 @@ package com.techgirl.inventory_management_system.controllers;
 import com.techgirl.inventory_management_system.dto.StatsResponse;
 import com.techgirl.inventory_management_system.services.SaleService;
 import com.techgirl.inventory_management_system.services.ProductService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import java.util.Map;
 @CrossOrigin("*")
 public class StatsController {
 
+    private static final Logger logger = LoggerFactory.getLogger(StatsController.class);
     private final SaleService saleService;
     private final ProductService productService;
 
@@ -30,6 +33,8 @@ public class StatsController {
 
     @GetMapping
     public StatsResponse getStats() {
+        logger.info("Fetching stats for total sales, revenue, products, and stock status.");
+
         StatsResponse statsResponse = new StatsResponse();
 
         statsResponse.setTotalSales(saleService.getTotalSales());
@@ -39,16 +44,23 @@ public class StatsController {
         statsResponse.setOutOfStockProducts(productService.getOutOfStockProducts());
         statsResponse.setLowStockProducts(productService.getLowStockProducts(10));  // assuming 10 as low stock threshold
 
+        logger.info("Stats response: {}", statsResponse);
         return statsResponse;
     }
 
     @GetMapping("/sales/last7days")
     public ResponseEntity<List<Map<String,Object>>> getStatsSalesForLast7Days(){
-        return new ResponseEntity<>(saleService.getSalesCountForLast7Days(), HttpStatus.OK);
+        logger.info("Fetching sales data for the last 7 days.");
+        List<Map<String,Object>> salesData = saleService.getSalesCountForLast7Days();
+        logger.info("Sales data for last 7 days: {}", salesData);
+        return new ResponseEntity<>(salesData, HttpStatus.OK);
     }
 
     @GetMapping("/revenue/monthly")
     public ResponseEntity<List<Map<String,Object>>> getMonthlyRevenue(){
-        return new ResponseEntity<>(saleService.getMonthlyRevenue(), HttpStatus.OK);
+        logger.info("Fetching monthly revenue data.");
+        List<Map<String,Object>> monthlyRevenue = saleService.getMonthlyRevenue();
+        logger.info("Monthly revenue data: {}", monthlyRevenue);
+        return new ResponseEntity<>(monthlyRevenue, HttpStatus.OK);
     }
 }

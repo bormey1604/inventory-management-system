@@ -2,12 +2,30 @@ server:
   port: 8090
 
 spring:
-  application.name: inventory-management-system
+  application:
+    name: inventory-management-system
   data:
     mongodb:
-      uri: ${MONGO_URI}/inventory_db
-#      uri: mongodb://localhost:27017/inventory_db
+      # uri: ${MONGO_URI}/inventory_db
+      uri: mongodb://localhost:27017/inventory_db
 
 logging:
   level:
-    org.mongodb.driver: ERROR
+    # Spring related logging
+    org:
+      springframework:
+        boot: INFO
+        web: INFO
+        data:
+          mongodb: DEBUG
+      mongodb:
+        driver: ERROR
+
+  # Pattern for logging (console output format)
+  pattern:
+    date-format: yyyy-dd-MM HH:mm:ss.SSS
+    console: '%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%-20.20thread] %-38X{X-CorrelationId:-00000000-0000-0000-0000-000000000000} %-30.30logger{0} : %msg%n'
+
+  # Additional log levels for specific categories (optional)
+  root:
+    level: INFO
