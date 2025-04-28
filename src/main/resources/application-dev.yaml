@@ -6,8 +6,8 @@ spring:
     name: inventory-management-system
   data:
     mongodb:
-      # uri: ${MONGO_URI}/inventory_db
-      uri: mongodb://localhost:27017/inventory_db
+       uri: ${MONGO_URI}/inventory_db
+#      uri: mongodb://localhost:27017/inventory_db
 
 logging:
   level:

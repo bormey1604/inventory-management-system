@@ -42,22 +42,14 @@ pipeline {
             }
         }
 
-        stage('Docker Run') {
+        stage('Trigger Deploy to Kubernetes') {
             steps {
                 script {
-                    // Stop and remove old container if exists
-                    sh '''
-                        docker ps -q -f name=inventory-management-system | grep -q . && docker stop inventory-management-system && docker rm inventory-management-system || true
-                    '''
-
-                    // Run the container with the versioned image (add image tag here)
-                    sh """
-                        docker run -d -p 8090:8090 \
-                        -e SPRING_PROFILES_ACTIVE=${env.SPRING_PROFILES_ACTIVE} \
-                        -e MONGO_URI=${env.MONGO_URI} \
-                        --name inventory-management-system \
-                        inventory-management-system:latest
-                    """
+                    // Trigger the "deploy-to-k8s" job
+                    build job: 'deploy-to-k8s', wait: true, parameters: [
+                        string(name: 'SPRING_PROFILES_ACTIVE', value: "${env.SPRING_PROFILES_ACTIVE}"),
+                        string(name: 'MONGO_URI', value: "${env.MONGO_URI}")
+                    ]
                 }
             }
         }
@@ -71,11 +63,11 @@ pipeline {
         }
 
         success {
-            echo 'Build and tests passed successfully!'
+            echo 'Build and tests passed successfully! Deployment triggered to Kubernetes.'
         }
 
         failure {
-            echo 'Build failed. Investigate the issues.'
+            echo 'Build or deployment failed. Investigate the issues.'
         }
     }
 }
