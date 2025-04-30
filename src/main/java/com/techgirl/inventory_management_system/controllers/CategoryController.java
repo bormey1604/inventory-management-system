@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("api/v1/categories")
+@RequestMapping("/api/v1/categories")
 @CrossOrigin("*")
 public class CategoryController {
 
@@ -30,7 +30,7 @@ public class CategoryController {
         return ResponseEntity.ok(created);
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<CategoryDto> getCategoryById(@PathVariable String id){
         logger.info("Fetching category by ID: {}", id);
         Optional<CategoryDto> findCategory = categoryService.getCategoryById(id);

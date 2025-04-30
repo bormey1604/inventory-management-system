@@ -47,7 +47,7 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<ProductDto> getProductById(@PathVariable String id) {
         logger.info("Fetching product by ID: {}", id);
         Optional<ProductDto> product = productService.getProductById(id);
@@ -60,7 +60,7 @@ public class ProductController {
         }
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<ProductDto> updateProduct(@PathVariable String id, @RequestBody ProductDto request) {
         logger.info("Updating product with ID: {} with data: {}", id, request);
         ProductDto updated = productService.updateProduct(id, request);
@@ -68,7 +68,7 @@ public class ProductController {
         return ResponseEntity.ok(updated);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProduct(@PathVariable String id) {
         logger.info("Deleting product with ID: {}", id);
         String result = productService.deleteProduct(id);
