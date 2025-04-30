@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        dockerTool 'Docker'                // Name must match Global Tool Configuration
+        dockerTool 'Docker'
         maven 'Maven 3.9.9'
         jdk 'JDK 21'
     }
@@ -38,17 +38,21 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                sh 'docker build -t inventory-management-system:latest .'
+                script {
+                    // Use Jenkins build number as image tag
+                    env.IMAGE_TAG = "${env.BUILD_NUMBER}"
+                    sh "docker build -t inventory-management-system:${IMAGE_TAG} ."
+                }
             }
         }
 
         stage('Trigger Deploy to Kubernetes') {
             steps {
                 script {
-                    // Trigger the "deploy-to-k8s" job
                     build job: 'deploy-to-k8s', wait: true, parameters: [
                         string(name: 'SPRING_PROFILES_ACTIVE', value: "${env.SPRING_PROFILES_ACTIVE}"),
-                        string(name: 'MONGO_URI', value: "${env.MONGO_URI}")
+                        string(name: 'MONGO_URI', value: "${env.MONGO_URI}"),
+                        string(name: 'IMAGE_TAG', value: "${env.IMAGE_TAG}")
                     ]
                 }
             }
@@ -58,12 +62,10 @@ pipeline {
     post {
         always {
             echo 'Cleaning up after the build'
-            // Optionally prune docker resources
-            // sh 'docker system prune -af'
         }
 
         success {
-            echo 'Build and tests passed successfully! Deployment triggered to Kubernetes.'
+            echo "Build and tests passed. Deployed with image tag: ${env.IMAGE_TAG}"
         }
 
         failure {
